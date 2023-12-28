@@ -1,3 +1,9 @@
+# local overrides
+/data/*
+!/data/_placeholder.txt
+!/data/_session/_placeholder.txt
+
+
 # Logs
 logs
 *.log
