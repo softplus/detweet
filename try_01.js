@@ -26,7 +26,7 @@ try {
     index_start = parseInt(f_counter);
     console.log('. Starting at index ' + String(index_start));
 } catch (e) { ; }
-let items_to_try = 100;
+let items_to_try = 1000;
 let item_counter = 0;
 
 let count_done = 0, count_tried = 0, count_waiting = 0;
