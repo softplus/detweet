@@ -3,7 +3,7 @@ data/_session/*
 !data/_session/_placeholder.txt
 data/_errors/*
 !data/_errors/_placeholder.txt
-data/*
+data/*.*
 !data/_placeholder.txt
 
 # --- defaults from github ---
