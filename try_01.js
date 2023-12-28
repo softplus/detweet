@@ -1,5 +1,6 @@
 'use strict';
-var fs = require('fs');
+const fs = require('fs');
+const puppeteer = require('puppeteer');
 
 const FILE_DONE   = './data/tweets_processed.csv';
 const FILE_INPUT  = './data/tweets_delete.csv';
@@ -13,8 +14,6 @@ function delay(time) {
     });
 }
 
-const puppeteer = require('puppeteer');
-
 let f_input_tweets = fs.readFileSync(FILE_INPUT, 'utf-8');
 let input_tweets = f_input_tweets.split("\n");
 let index_start = 0;
@@ -26,10 +25,9 @@ try {
 let items_to_try = 1000;
 let item_counter = 0;
 
-let count_done = 0, count_tried = 0, count_waiting = 0;
 const WAIT_PER_ITEM = 3000;
 const WAIT_PER_CLICK = 500;
-const WAIT_PER_PAGE_LOAD = 2000;
+const WAIT_PER_PAGE_LOAD = 1000;
 
 (async() => {
     //var browser, page;
@@ -60,7 +58,7 @@ const WAIT_PER_PAGE_LOAD = 2000;
         response = await page.goto(url, {waitUntil: 'networkidle2'});
         await delay(WAIT_PER_PAGE_LOAD);
 
-        let ok = true; 
+        let ok = true, failure = false;
 
         // click "more" menu
         const menu_0_btns = await page.$$('div[data-testid="caret"]');
@@ -85,14 +83,9 @@ const WAIT_PER_PAGE_LOAD = 2000;
             });
             console.log('. is_deleted = ' + String(is_deleted)); 
             if (!is_deleted) {
-                let page_cont = await page.evaluate((seeking) => {
-                    return document.body.textContent;
-                });
-                console.log("x page content=" + page_cont);
-                await page.screenshot({ path: 'data/_last_error.png' });
                 await page.screenshot({ path: FILE_ERRORS + "/" + String(item_index) + ".png" });
-                console.log("x aborting");
-                break;
+                console.log("x Weird");
+                failure = true;
             }
             ok = false;
         }
@@ -101,14 +94,19 @@ const WAIT_PER_PAGE_LOAD = 2000;
             await delay(WAIT_PER_CLICK);
             const menu_1_btns = await page.$$('div[role="menuitem"]');
             const menu_delete = menu_1_btns[0];
-            let menu_delete_text = await page.evaluate(el => el.textContent, menu_delete);
-            if (menu_delete_text=="Delete") {
-                menu_delete.click();
+            if (menu_delete) {
+                let menu_delete_text = await page.evaluate(el => el.textContent, menu_delete);
+                if (menu_delete_text && menu_delete_text=="Delete") {
+                    menu_delete.click();
+                } else {
+                    console.log("x no delete item.");
+                    failure = true;
+                    ok = false;
+                }    
             } else {
-                console.log("x no delete item.");
-                await page.screenshot({ path: FILE_ERRORS + "/" + String(item_index) + ".png" });
+                console.log("x no delete menu at all.");
+                failure = true;
                 ok = false;
-                break;
             }
         }
 
@@ -120,9 +118,8 @@ const WAIT_PER_PAGE_LOAD = 2000;
                 console.log(". clicked confirm.");
             } else {
                 console.log("x no confirm dialog");
-                await page.screenshot({ path: FILE_ERRORS + "/" + String(item_index) + ".png" });
                 ok = false;
-                break;
+                failure = true;
             }
         }
 
@@ -130,6 +127,15 @@ const WAIT_PER_PAGE_LOAD = 2000;
         if (ok) {
             fs.appendFileSync(FILE_DONE, url + "\n");
             await delay(WAIT_PER_PAGE_LOAD);
+        } else {
+            if (failure) {
+                const screenshot_file = FILE_ERRORS + "/" + String(item_index) + ".png";
+                console.log(". Screenshotting: " + screenshot_file);
+                await page.screenshot({ path: screenshot_file });
+                console.log(". Giving more time, adding to retry list.")
+                await delay(WAIT_PER_ITEM*3);
+                fs.appendFileSync(FILE_INPUT, url + "#\n");
+            }
         }
 
         // next
@@ -137,7 +143,7 @@ const WAIT_PER_PAGE_LOAD = 2000;
     }
 
     console.log(". Finished! Processed: " + String(item_counter) + " items");
-    await delay(WAIT_PER_PAGE_LOAD);
+    await delay(WAIT_PER_ITEM);
     await browser.close();
     process.exit();
 
