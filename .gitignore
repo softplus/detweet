@@ -1,8 +1,8 @@
 # local overrides
-/data/*
-!/data/_session/_placeholder.txt
-!/data/_errors/_placeholder.txt
-!/data/_placeholder.txt
+data/
+!data/_session/_placeholder.txt
+!data/_errors/_placeholder.txt
+!data/_placeholder.txt
 
 # --- defaults from github ---
 
