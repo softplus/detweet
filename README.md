@@ -13,8 +13,7 @@ npm install fs
 
 ```
 git pull
-...
-deactivate
+npm update
 ```
 
 # run
