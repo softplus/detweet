@@ -4,22 +4,15 @@ Remove Tweets via Puppeteer
 # initial setup
 
 ```
-virtualenv .venv
-source .venv/bin/activate
 npm init
 npm install puppeteer
 npm install fs user-agents
-...
-deactivate
 ```
 
 # updates
 
 ```
 git pull
-source .venv/bin/activate
-pip install -r requirements.txt
-
 ...
 deactivate
 ```
@@ -29,9 +22,7 @@ deactivate
 First: put the list of tweet URLs into /data/tweets_delete.csv (just a list of URLS for your account)
 
 ```
-source .venv/bin/activate
 npm try_01.js
-deactivate
 ```
 
 On first start, it opens a browser window where you need to log in to your Twitter account.
