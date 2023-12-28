@@ -2,7 +2,9 @@
 /data/*
 !/data/_placeholder.txt
 !/data/_session/_placeholder.txt
+!/data/_errors/_placeholder.txt
 
+# --- defaults from github ---
 
 # Logs
 logs
