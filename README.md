@@ -6,7 +6,7 @@ Remove Tweets via Puppeteer
 ```
 npm init
 npm install puppeteer
-npm install fs user-agents
+npm install fs
 ```
 
 # updates

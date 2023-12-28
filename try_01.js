@@ -1,8 +1,5 @@
 'use strict';
 var fs = require('fs');
-var url = require('url');
-var querystring = require('querystring');
-var UserAgent = require('user-agents');
 
 const FILE_DONE   = './data/tweets_processed.csv';
 const FILE_INPUT  = './data/tweets_delete.csv';
