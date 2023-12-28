@@ -4,6 +4,9 @@ Remove Tweets via Puppeteer
 # initial setup
 
 ```
+git clone https://github.com/softplus/detweet
+cd detweet
+
 npm init
 npm install puppeteer
 npm install fs
