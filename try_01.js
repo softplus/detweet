@@ -22,10 +22,10 @@ try {
     index_start = parseInt(f_counter);
     console.log('. Starting at index ' + String(index_start));
 } catch (e) { ; }
-let items_to_try = 1000;
+let items_to_try = 5000;
 let item_counter = 0;
 
-const WAIT_PER_ITEM = 3000;
+const WAIT_PER_ITEM = 8000;
 const WAIT_PER_CLICK = 500;
 const WAIT_PER_PAGE_LOAD = 1000;
 
@@ -54,7 +54,8 @@ const WAIT_PER_PAGE_LOAD = 1000;
         await delay(WAIT_PER_ITEM);
         const item_index = item_counter + index_start;
         let url = input_tweets[item_index];
-        console.log("> Index: " + String(item_index) + ", URL: " + url );
+        let datestr = (new Date()).toISOString();
+        console.log("> Index: " + String(item_index) + ", URL: " + url + " at " + datestr);
         response = await page.goto(url, {waitUntil: 'networkidle2'});
         await delay(WAIT_PER_PAGE_LOAD);
 
