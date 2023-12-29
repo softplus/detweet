@@ -24,8 +24,9 @@ try {
 } catch (e) { ; }
 let items_to_try = 5000;
 let item_counter = 0;
+let backoff_delay = 0;
 
-const WAIT_PER_ITEM = 8000;
+const WAIT_PER_ITEM = 3000;
 const WAIT_PER_CLICK = 500;
 const WAIT_PER_PAGE_LOAD = 1000;
 
@@ -52,6 +53,7 @@ const WAIT_PER_PAGE_LOAD = 1000;
 
     for (item_counter=0; item_counter<items_to_try; item_counter++) {
         await delay(WAIT_PER_ITEM);
+        await delay(backoff_delay);
         const item_index = item_counter + index_start;
         let url = input_tweets[item_index];
         let datestr = (new Date()).toISOString();
@@ -75,7 +77,10 @@ const WAIT_PER_PAGE_LOAD = 1000;
                 break; 
             }
         }
-
+        if (was_clicked && backoff_delay>0) {
+            backoff_delay = Math.max(0.7 * backoff_delay - 100, 0); 
+            console.log(". backoff-delay reduced to " + String(backoff_delay));
+        }
         if (!was_clicked) {
             console.log("x couldn't click menu");
             let is_deleted = await page.evaluate((seeking) => {
@@ -84,6 +89,15 @@ const WAIT_PER_PAGE_LOAD = 1000;
             });
             console.log('. is_deleted = ' + String(is_deleted)); 
             if (!is_deleted) {
+                let is_limited = await page.evaluate((seeking) => {
+                    return document.body.textContent.includes("Something went wrong");
+                    // Something went wrong. Try reloading.
+                });
+                if (is_limited) {
+                    console.log("x looks rate limited.");
+                    backoff_delay = Math.min(2*60*1000 + backoff_delay*1.5, 30*60*1000);
+                    console.log(". backoff-delay increased to " + String(backoff_delay)); 
+                }
                 await page.screenshot({ path: FILE_ERRORS + "/" + String(item_index) + ".png" });
                 console.log("x Weird");
                 failure = true;
