@@ -191,7 +191,7 @@ let backoff_delay = 0;
             continue; // retry next
         }
         if (backoff_delay>0) {
-            backoff_delay = Math.max(0.7 * backoff_delay - 100, 0); 
+            backoff_delay = Math.max(0.7 * backoff_delay - 500, 0); 
             console.log(". backoff-delay reduced to " + String(backoff_delay));
         }
 
