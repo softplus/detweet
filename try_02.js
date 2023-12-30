@@ -22,8 +22,7 @@ function delay(time_ms) {
 
 // check if the open menu has a "Delete" item, if so, return it
 async function has_menu_delete(page) {
-    const menu_1_btns = await page.$$('div[role="menuitem"]');
-    const menu_delete = menu_1_btns[0];
+    const menu_delete = await page.$('div[role="menuitem"]');
     if (menu_delete) {
         let menu_delete_text = await page.evaluate(el => el.textContent, menu_delete);
         if (menu_delete_text=="Delete") return menu_delete;
@@ -72,13 +71,36 @@ async function click_menudelete(page) {
 
 // Click to confirm the open command
 async function click_confirm(page) {
-    const menu_2_btns = await page.$$('div[data-testid="confirmationSheetConfirm"]');
-    if (menu_2_btns.length>0) {
-        menu_2_btns[0].click();
+    const menu_2_btn = await page.$('div[data-testid="confirmationSheetConfirm"]');
+    if (menu_2_btn) {
+        menu_2_btn.click();
         console.log(". clicked confirm.");
         return true;
     } else {
         console.log("x no confirm dialog");
+    }
+    return false;
+}
+
+// check for unretweet button, click it
+async function click_unretweet(page) {
+    const unretweet_btn = await page.$('div[data-testid="unretweet"]');
+    if (unretweet_btn) {
+        unretweet_btn.click();
+        await delay(WAIT_PER_CLICK);
+        const menu_btn = await page.$('div[role="menuitem"]');
+        if (menu_btn) {
+            let menu_item_text = await page.evaluate(el => el.textContent, menu_btn);
+            if (menu_item_text=="Undo repost") {
+                menu_btn.click();
+                await delay(WAIT_PER_CLICK);
+                console.log(". clicked unretweet");
+                return true;
+            } else {
+                page.keyboard.press("Escape");
+                await delay(WAIT_PER_CLICK);
+            }
+        }
     }
     return false;
 }
@@ -181,6 +203,8 @@ let backoff_delay = 0;
                     ok = true;
                 }
             }
+        } else {
+            if (await click_unretweet(page)) ok = true;
         }
 
         if (ok) {
