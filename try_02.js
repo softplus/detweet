@@ -170,9 +170,11 @@ let backoff_delay = 0;
 
     // Try to delete as many tweets as specified in ITEMS_TO_TRY
     for (item_counter=0; item_counter<ITEMS_TO_TRY; item_counter++) {
-        await delay(WAIT_PER_ITEM + backoff_delay);
         const item_index = item_counter + index_start;
+        if (item_index>=input_tweets.length) break;
         let url = input_tweets[item_index];
+        if (url=="") continue;
+        await delay(WAIT_PER_ITEM + backoff_delay);
         console.log("> Line " + String(item_index) + ", URL " + url + " at " + 
             (new Date()).toISOString());
         fs.writeFileSync(FILE_COUNTER, String(item_index));
