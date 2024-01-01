@@ -94,13 +94,14 @@ You can get a list of your tweets by requesting a data-dump and then extracting 
 
 3. Copy the files to your Google Drive
 
-4. Run this Google Colab: https://colab.research.google.com/gist/softplus/438a3956c5f066f37d9cb81029d96601/tweets_to_csv.ipynb (Source: https://gist.github.com/softplus/438a3956c5f066f37d9cb81029d96601#file-tweets_to_csv-ipynb )
+4. Run this Google Colab: https://github.com/softplus/detweet/blob/main/tweets_to_csv.ipynb 
 
 5. Take the `tweets.csv` file and import it into Google Sheets
 
 6. Go through the list, pick the ones you want to keep, etc.
 
 7. Take the list of Twitter URLs and save them into `data/tweets_delete.csv`.
+Note the CSV files used are just normal text files containing a list of URLs, one per line.
 
 8. Run the script as above.
 
