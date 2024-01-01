@@ -1,4 +1,13 @@
 'use strict';
+
+/** 
+ * # Copyright 2023-2024, John Mueller
+ * # MIT License, see LICENSE file
+ * # SPDX-FileCopyrightText: 2023-2024 John Mueller
+ * # SPDX-License-Identifier: MIT
+ * # https://github.com/softplus/detweet
+ */
+
 const fs = require('fs');
 const puppeteer = require('puppeteer');
 
