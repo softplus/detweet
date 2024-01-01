@@ -4,11 +4,12 @@ const puppeteer = require('puppeteer');
 
 const FILE_DONE   = './data/tweets_processed.csv';
 const FILE_INPUT  = './data/tweets_delete.csv';
+const FILE_CANT   = './data/tweets_old_reposts.csv';
 const FILE_COUNTER= './data/_counter.csv';
 const FILE_SESSION= './data/_session';
 const FILE_ERRORS = './data/_errors';
 
-const ITEMS_TO_TRY = 1000;
+const ITEMS_TO_TRY = 5000;
 const WAIT_PER_ITEM = 3000; // ms
 const WAIT_PER_CLICK = 500; // ms
 const WAIT_PER_PAGE_LOAD = 1000; // ms
@@ -107,21 +108,60 @@ async function click_unretweet(page) {
 
 // Is this tweet deleted already?
 async function tweet_is_deleted(page) {
-    let is_deleted = await page.evaluate((seeking) => {
+    let is_found = await page.evaluate((seeking) => {
         return document.body.textContent.includes("this page doesn");
         // Hmm...this page doesn’t exist. Try searching for something else.
     });
-    console.log('. is_deleted = ' + String(is_deleted));
-    return is_deleted;
+    if (is_found) console.log('. Tweet is deleted');
+    return is_found;
 }
 
 // Is Twitter blocking us? $14 gets you more quota
 async function twitter_is_blocked(page) {
-    let is_limited = await page.evaluate((seeking) => {
-        return document.body.textContent.includes("Something went wrong");
+    let is_found = await page.evaluate((seeking) => {
+        return document.body.textContent.includes("Something went wrong. Try reloading.");
         // Something went wrong. Try reloading.
     });
-    return is_limited;
+    return is_found;
+}
+
+// Is this an old repost that cant be deleted
+async function twitter_is_old_repost(page) {
+    let is_found = await page.evaluate((seeking) => {
+        return document.body.textContent.includes("You reposted");
+        // You reposted
+    });
+    return is_found;
+}
+
+// retweet from an account gone private
+async function tweet_is_private(page) {
+    let is_found = await page.evaluate((seeking) => {
+        return document.body.textContent.includes("unable to view this Post because this account");
+        // You’re unable to view this Post because this account owner limits who can view their Posts. Learn more
+    });
+    if (is_found) console.log(". Retweeting account it private.");
+    return is_found;
+}
+
+// retweet from an account that is gone
+async function tweet_account_gone(page) {
+    let is_found = await page.evaluate((seeking) => {
+        return document.body.textContent.includes("Post is from an account that no longer exists");
+        // This Post is from an account that no longer exists. Learn more
+    });
+    if (is_found) console.log(". Retweeting account no longer exists.");
+    return is_found;
+}
+
+// retweet from an account that is suspended
+async function tweet_account_suspended(page) {
+    let is_found = await page.evaluate((seeking) => {
+        return document.body.textContent.includes("Post is from a suspended account");
+        // This Post is from a suspended account. Learn more
+    });
+    if (is_found) console.log(". Retweeting account is suspended.");
+    return is_found;
 }
 
 // Well, this failed. Let's screenshot & log it for retry
@@ -147,7 +187,8 @@ let backoff_delay = 0;
 
 // This is pretty much our stuff
 (async() => {
-    let browser = await puppeteer.launch({ headless: false, userDataDir: FILE_SESSION});
+    let browser = await puppeteer.launch({ 
+        headless: false, userDataDir: FILE_SESSION, defaultViewport: null});
     let page = await browser.newPage();
 
     // User must be logged in. Session data is saved for next time.
@@ -195,9 +236,12 @@ let backoff_delay = 0;
             console.log(". backoff-delay reduced to " + String(backoff_delay));
         }
 
-        // is the tweet deleted
+        // is the tweet deleted, or account somehow limited
         if (await tweet_is_deleted(page)) continue;
-
+        if (await tweet_is_private(page)) continue;
+        if (await tweet_account_gone(page)) continue;
+        if (await tweet_account_suspended(page)) continue;
+        
         // click the menu & delete it
         if (await click_dotdotdot(page)) {
             if (await click_menudelete(page)) {
@@ -206,7 +250,16 @@ let backoff_delay = 0;
                 }
             }
         } else {
-            if (await click_unretweet(page)) ok = true;
+            if (await click_unretweet(page)) {
+                ok = true;
+            } else {
+                if (await twitter_is_old_repost(page)) {
+                    // well, tough.
+                    console.log("x This is an old repost that can't be deleted.")
+                    fs.appendFileSync(FILE_CANT, url.replaceAll("#", "") + "\n");
+                    ok = true;
+                }
+            }
         }
 
         if (ok) {
