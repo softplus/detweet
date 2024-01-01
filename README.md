@@ -94,7 +94,7 @@ You can get a list of your tweets by requesting a data-dump and then extracting 
 
 3. Copy the files to your Google Drive
 
-4. Run this Google Colab: https://colab.research.google.com/gist/softplus/9e7210f62ee5a3a1b535fe28b1504be4/tweets_to_csv.ipynb (Source: https://gist.github.com/softplus/9e7210f62ee5a3a1b535fe28b1504be4#file-tweets_to_csv-ipynb )
+4. Run this Google Colab: https://colab.research.google.com/gist/softplus/438a3956c5f066f37d9cb81029d96601/tweets_to_csv.ipynb (Source: https://gist.github.com/softplus/438a3956c5f066f37d9cb81029d96601#file-tweets_to_csv-ipynb )
 
 5. Take the `tweets.csv` file and import it into Google Sheets
 
