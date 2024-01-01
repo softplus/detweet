@@ -8,8 +8,8 @@ How do you delete 20k tweets? Automation.
 (c) 2023-2024 John Mueller, MIT Licensed.
 https://github.com/softplus/ & https://johnmu.com
 
-Uses Node & Puppeteer, which runs Chrome. Tested on Ubuntu.
-You need to install Node beforehand.
+Uses [Node](https://nodejs.org/) & [Puppeteer](https://pptr.dev/), which runs Chrome.
+Tested on Ubuntu. You need to install Node beforehand.
 Likely to work on other platforms, but I didn't test.
 
 ## Initial setup
