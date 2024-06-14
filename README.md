@@ -44,7 +44,7 @@ Put the list of tweet URLs into `data/tweets_delete.csv` (just a list of URLS fo
 3. Run first time:
 
 ```bash
-npm detweet.js
+node detweet.js
 ```
 
 This will open a browser window and navigate to Twitter.
