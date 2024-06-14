@@ -35,7 +35,6 @@ function delay(time_ms) {
 // check if the open menu has a "Delete" item, if so, return it
 async function has_menu_delete(page) {
     const menu_delete = await page.$('div[role="menuitem"]');
-    //const menu_delete = await page.$$('button[data-testid="confirmationSheetConfirm"]');
     if (menu_delete) {
         let menu_delete_text = await page.evaluate(el => el.textContent, menu_delete);
         if (menu_delete_text=="Delete") return menu_delete;
