@@ -4,6 +4,7 @@ Remove Tweets via Puppeteer - using the Google Chrome browser.
 
 The Twitter API only supports 50 delete operations per day.
 How do you delete 20k tweets? Automation.
+Is it 'X' now? Yes, it's 'X' now.
 
 (c) 2023-2024 John Mueller, MIT Licensed.
 https://github.com/softplus/ & https://johnmu.com
@@ -37,7 +38,7 @@ npm update
 
 1. Get list of tweets (see below)
 
-Put the list of tweet URLs into `data/tweets_delete.csv` (just a list of URLS for your account)
+Put the list of tweet URLs into `data/tweets_delete.csv` (just a list of URLS for your account; these can be on twitter.com or x.com)
 
 2. Clean up temporary files: delete `data/_counter.csv`, empty `data/_errors/`
 
@@ -58,8 +59,7 @@ The browser window will remain open and show what's happening.
 This code does not copy & take your Twitter data, though theoretically it could.
 Don't run random code that accesses your Twitter account.
 Should you run this? Don't trust me, ideally look at the code.
-Sorry that I can't be more reassuring, but there are jerks out there who might do weird stuff.
-I don't think I'm one, but who knows.
+Sorry that I can't be more reassuring.
 
 Set your Twitter account to English.
 This script uses text on the UI to understand what's happening.
@@ -100,14 +100,15 @@ You can get a list of your tweets by requesting a data-dump and then extracting 
 
 6. Go through the list, pick the ones you want to keep, etc.
 
-7. Take the list of Twitter URLs and save them into `data/tweets_delete.csv`.
+7. Take the list of Twitter URLs that you want to delete and save them into `data/tweets_delete.csv`.
 Note the CSV files used are just normal text files containing a list of URLs, one per line.
+No CSV header is needed.
 
 8. Run the script as above.
 
 ## Questions?
 
-I probably can't help much, but you can try to reach me on Mastodon: https://johnmu.com/+
+I probably can't help much, but you can try to reach me on social: https://johnmu.com/+
 
 
 Q: But why?
@@ -117,7 +118,7 @@ A: I wanted to delete my tweets, but I had >20k tweets, so I couldn't use the Tw
 
 Q: Why not use the Twitter API?
 
-A: It only allows 50 delete operations per day.
+A: It only allows 50 delete operations per day. That would take a while.
 
 
 Q: Why can't it delete all retweets?
