@@ -119,6 +119,8 @@ A: I wanted to delete my tweets, but I had >20k tweets, so I couldn't use the Tw
 Q: Why not use the Twitter API?
 
 A: It only allows 50 delete operations per day. That would take a while.
+The code here processes about 400 in an hour.
+It could be sped up by tweaking the delays, but you don't have to watch it, so it's fine.
 
 
 Q: Why can't it delete all retweets?
