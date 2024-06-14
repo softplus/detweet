@@ -248,14 +248,12 @@ let backoff_delay = 0;
         }
 
         // is the tweet deleted, or account somehow limited
-        console.log(". part 1");
         if (await tweet_is_deleted(page)) continue;
         if (await tweet_is_private(page)) continue;
         if (await tweet_account_gone(page)) continue;
         if (await tweet_account_suspended(page)) continue;
         
         // click the menu & delete it
-        console.log(". part 2");
         if (await click_dotdotdot(page)) {
             if (await click_menudelete(page)) {
                 if (await click_confirm(page)) {
@@ -274,7 +272,6 @@ let backoff_delay = 0;
                 }
             }
         }
-        console.log(". part 3");
 
         if (ok) {
             // log as successful
