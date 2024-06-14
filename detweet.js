@@ -18,6 +18,8 @@ const FILE_COUNTER= './data/_counter.csv';
 const FILE_SESSION= './data/_session';
 const FILE_ERRORS = './data/_errors';
 
+const TWITTER_HOST= 'x.com'; // aka 'twitter.com'
+
 const ITEMS_TO_TRY = 5000;
 const WAIT_PER_ITEM = 3000; // ms
 const WAIT_PER_CLICK = 500; // ms
@@ -33,6 +35,7 @@ function delay(time_ms) {
 // check if the open menu has a "Delete" item, if so, return it
 async function has_menu_delete(page) {
     const menu_delete = await page.$('div[role="menuitem"]');
+    //const menu_delete = await page.$$('button[data-testid="confirmationSheetConfirm"]');
     if (menu_delete) {
         let menu_delete_text = await page.evaluate(el => el.textContent, menu_delete);
         if (menu_delete_text=="Delete") return menu_delete;
@@ -43,7 +46,7 @@ async function has_menu_delete(page) {
 // find this tweets "..." menu that leads to a Delete menu, click it
 async function click_dotdotdot(page) {
     // click "more" menu that leads to delete
-    const menu_0_btns = await page.$$('div[data-testid="caret"]');
+    const menu_0_btns = await page.$$('button[data-testid="caret"]');
     let was_clicked = false, attempts = 0;
     for (const e_this of menu_0_btns) { 
         const item_top = await page.evaluate((elem) => {
@@ -81,7 +84,7 @@ async function click_menudelete(page) {
 
 // Click to confirm the open command
 async function click_confirm(page) {
-    const menu_2_btn = await page.$('div[data-testid="confirmationSheetConfirm"]');
+    const menu_2_btn = await page.$('button[data-testid="confirmationSheetConfirm"]');
     if (menu_2_btn) {
         menu_2_btn.click();
         console.log(". clicked confirm.");
@@ -94,7 +97,7 @@ async function click_confirm(page) {
 
 // check for unretweet button, click it
 async function click_unretweet(page) {
-    const unretweet_btn = await page.$('div[data-testid="unretweet"]');
+    const unretweet_btn = await page.$('button[data-testid="unretweet"]');
     if (unretweet_btn) {
         unretweet_btn.click();
         await delay(WAIT_PER_CLICK);
@@ -201,14 +204,14 @@ let backoff_delay = 0;
     let page = await browser.newPage();
 
     // User must be logged in. Session data is saved for next time.
-    let response = await page.goto('https://twitter.com', {waitUntil: 'networkidle2'});
-    console.log("> Log in, then navigate to https://twitter.com/home ; times out in 120 sec")
+    let response = await page.goto('https://' + TWITTER_HOST, {waitUntil: 'networkidle2'});
+    console.log("> Log in, then navigate to https://" + TWITTER_HOST + "/home ; times out in 120 sec")
     // wait up to a minute ...
     for (let repeat=120*2; repeat>0; repeat--) {
         await delay(500);
-        if (page.url() == 'https://twitter.com/home') break;
+        if (page.url() == 'https://' + TWITTER_HOST + '/home') break;
     }
-    if (page.url() != 'https://twitter.com/home') {
+    if (page.url() != 'https://' + TWITTER_HOST + '/home') {
         console.log("! Timed out. Aborting.");
         await browser.close();
         process.exit();
@@ -246,12 +249,14 @@ let backoff_delay = 0;
         }
 
         // is the tweet deleted, or account somehow limited
+        console.log(". part 1");
         if (await tweet_is_deleted(page)) continue;
         if (await tweet_is_private(page)) continue;
         if (await tweet_account_gone(page)) continue;
         if (await tweet_account_suspended(page)) continue;
         
         // click the menu & delete it
+        console.log(". part 2");
         if (await click_dotdotdot(page)) {
             if (await click_menudelete(page)) {
                 if (await click_confirm(page)) {
@@ -270,6 +275,7 @@ let backoff_delay = 0;
                 }
             }
         }
+        console.log(". part 3");
 
         if (ok) {
             // log as successful
