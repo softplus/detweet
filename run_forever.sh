@@ -7,7 +7,7 @@
 # https://github.com/softplus/detweet
 
 # Run the detweet.js script forever, logging output to data/detweet.log
-# and sleeping for 60 seconds between runs.
+# and sleeping for 120 seconds between runs.
 #
 # Useful when detweet.js crashes and you want to restart it automatically.
 #
@@ -20,8 +20,8 @@
 #
 
 while true; do
-  node detweet.js | tee -a data/detweet.log
-  echo "detweet.js crashed / finished. Restarting in 60 seconds..." | tee -a data/detweet.log
-  sleep 60
+  echo "# `date` - Starting detweet.js..." | tee -a data/detweet.log
+  node detweet.js 2>&1 | tee -a data/detweet.log
+  echo "# `date` - detweet.js crashed / finished. Restarting in 120 seconds..." | tee -a data/detweet.log
+  sleep 120
 done
-
