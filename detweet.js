@@ -151,7 +151,7 @@ async function tweet_is_private(page) {
         return document.body.textContent.includes("unable to view this Post because this account");
         // You’re unable to view this Post because this account owner limits who can view their Posts. Learn more
     });
-    if (is_found) console.log(". Retweeting account it private.");
+    if (is_found) console.log(". Retweeting account is private.");
     return is_found;
 }
 
