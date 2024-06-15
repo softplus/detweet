@@ -25,6 +25,7 @@ const WAIT_PER_ITEM = 3000; // ms
 const WAIT_PER_CLICK = 500; // ms
 const WAIT_PER_PAGE_LOAD = 1000; // ms
 
+// some of the UI strings we're looking for
 const UI_ESCAPE_KEY = "Escape";
 const UI_DELETE_TEXT = "Delete";
 const UI_PAGE_NOT_FOUND = "this page doesn"; 
@@ -200,7 +201,7 @@ async function navigateToHomePageAndLogIn(page) {
 
     for (let repeat = 120 * 2; repeat > 0; repeat--) {
         await delay(500);
-        if (page.url() == main_url) break;
+        if (page.url() === main_url) break;
     }
 
     if (page.url() != main_url) {
@@ -214,8 +215,7 @@ async function navigateToHomePageAndLogIn(page) {
 }
 
 // load the list of tweets to delete
-const f_input_tweets = fs.readFileSync(FILE_INPUT, 'utf-8');
-const input_tweets = f_input_tweets.split("\n");
+const input_tweets = fs.readFileSync(FILE_INPUT, 'utf-8').split("\n");
 let index_start = 0;
 try {
     let f_counter = fs.readFileSync(FILE_COUNTER, 'utf8');
